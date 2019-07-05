@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import { View, StyleSheet, Text, TouchableOpacity } from 'react-native';
-import { Input, Icon, ListItem } from 'react-native-elements';
+import { Input, Icon } from 'react-native-elements';
 import { ScrollView } from 'react-native-gesture-handler';
 
 let messages = [];
@@ -26,6 +26,9 @@ export default class Message extends Component {
         this.setState({
           messages: messages
         });
+        setTimeout(() => {
+          this.scrollViewRef.scrollToEnd();
+        },1);
       }
     });
 
@@ -34,6 +37,9 @@ export default class Message extends Component {
       this.setState({
         messages: messages
       });
+      setTimeout(() => {
+        this.scrollViewRef.scrollToEnd();
+      },1);
     });
 
   }
@@ -56,7 +62,9 @@ export default class Message extends Component {
   render() {
     return (
       <View style={{ flex: 1 }}>
-        <ScrollView style={{flex:0.8}}>
+        <ScrollView ref={(e) => {
+          this.scrollViewRef = e;
+        }} style={{flex:0.7}}>
           {
             this.state.messages.map((msg, i) => {
               return msg.sender == 1 ? <Text key={i} style={styles.yourMess}>{msg.message}</Text>
@@ -88,7 +96,7 @@ export default class Message extends Component {
 
 const styles = StyleSheet.create({
   sendMess: {
-    flex: 0.11,
+    flex: 0.15,
   },
   yourMess: {
     backgroundColor: 'rgba(43, 166, 203, 0.5)',
@@ -98,7 +106,8 @@ const styles = StyleSheet.create({
     marginTop: 10,
     marginRight: 10,
     marginBottom: 5,
-    borderRadius: 13
+    borderRadius: 13,
+    maxWidth: '60%'
   },
   theirMess: {
     backgroundColor: 'rgba(43, 166, 203, 0.5)',
@@ -108,6 +117,7 @@ const styles = StyleSheet.create({
     marginTop: 10,
     marginLeft: 10,
     marginBottom: 5,
-    borderRadius: 13
+    borderRadius: 13,
+    maxWidth: '60%'
   }
 });

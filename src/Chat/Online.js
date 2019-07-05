@@ -15,9 +15,9 @@ export default class Online extends Component {
   }
   componentDidMount(){
     global.socket.on('user online', (users) => {
-      // users = users.filter(user => {
-      //   return user.id_user != global.user.id;
-      // });
+      users = users.filter(user => {
+        return user.id_user != global.user.id;
+      });
       
       this.setState({
         user_online: users
