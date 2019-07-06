@@ -2,10 +2,15 @@ import React, { Component } from 'react';
 import { View, StyleSheet, Text, TouchableOpacity } from 'react-native';
 import { Input, Icon } from 'react-native-elements';
 import { ScrollView } from 'react-native-gesture-handler';
+import firebase from 'react-native-firebase';
+import uuid from 'uuid/v1';
 
 let messages = [];
 
+let scrollViewRef = null;
+
 export default class Message extends Component {
+
   static navigationOptions = ({ navigation }) => {
     return {
       title: navigation.getParam('user').name,
@@ -20,28 +25,52 @@ export default class Message extends Component {
     });
     this.handleSendMess = this.handleSendMess.bind(this);
 
-    global.socket.on('send message', (data) => {
+  }
+
+  componentDidMount() {
+    this.socket = global.socket;
+
+    firebase.notifications().onNotificationOpened((notificationOpen) => {
+      firebase.notifications().removeDeliveredNotification(notificationOpen.notification._notificationId);
+      const user = notificationOpen.notification._data;
+      this.props.navigation.navigate('Message', { user });
+    });
+
+    this.socket.on('send message', (data) => {
       if (data.id_sender == this.props.navigation.getParam('user').id_user) {
         messages.push(data);
         this.setState({
           messages: messages
         });
         setTimeout(() => {
-          this.scrollViewRef.scrollToEnd();
-        },1);
+          scrollViewRef.scrollToEnd();
+        }, 1);
+      } else {
+        const notification = new firebase.notifications.Notification()
+          .setNotificationId(uuid())
+          .setTitle(data.name_sender)
+          .setBody(data.message)
+          .setData({
+            id_user: data.id_sender,
+            name: data.name_sender
+          });
+        notification
+          .android.setChannelId('message')
+          .android.setSmallIcon('ic_launcher');
+
+        firebase.notifications().displayNotification(notification);
       }
     });
 
-    global.socket.on('my message', (data) => {
+    this.socket.on('my message', (data) => {
       messages.push(data);
       this.setState({
         messages: messages
       });
       setTimeout(() => {
-        this.scrollViewRef.scrollToEnd();
-      },1);
+        scrollViewRef.scrollToEnd();
+      }, 1);
     });
-
   }
 
   handleSendMess() {
@@ -49,6 +78,7 @@ export default class Message extends Component {
       global.socket.emit('send message',
         {
           id_user: this.props.navigation.getParam('user').id_user,
+          name_sender: global.user.name,
           id_sender: global.user.id,
           message: this.state.inputMess
         });
@@ -59,12 +89,38 @@ export default class Message extends Component {
 
   }
 
+  componentWillUnmount() {
+    messages = [];
+    this.setState({
+      messages: []
+    })
+    console.log(this.state.messages);
+    this.socket.removeListener('my message');
+    this.socket.removeListener('send message');
+    this.socket.on('send message', (data) => {
+      const notification = new firebase.notifications.Notification()
+        .setNotificationId(uuid())
+        .setTitle(data.name_sender)
+        .setBody(data.message)
+        .setData({
+          id_user: data.id_sender,
+          name: data.name_sender
+        });
+      notification
+        .android.setChannelId('online')
+        .android.setSmallIcon('ic_launcher');
+
+      firebase.notifications().displayNotification(notification);
+    });
+    this.socket = undefined;
+  }
+
   render() {
     return (
       <View style={{ flex: 1 }}>
         <ScrollView ref={(e) => {
-          this.scrollViewRef = e;
-        }} style={{flex:0.7}}>
+          scrollViewRef = e;
+        }} style={{ flex: 0.7 }}>
           {
             this.state.messages.map((msg, i) => {
               return msg.sender == 1 ? <Text key={i} style={styles.yourMess}>{msg.message}</Text>

@@ -23,6 +23,8 @@ const AppNavigation = createStackNavigator(
                     Message: {
                         screen: MessageScreen
                     }
+                },{
+                    mode: 'modal'
                 })
             },
             {

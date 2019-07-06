@@ -5015,7 +5015,7 @@ prompts@^2.0.1:
     kleur "^3.0.2"
     sisteransi "^1.0.0"
 
-prop-types@^15.5.10, prop-types@^15.5.8, prop-types@^15.6.1, prop-types@^15.6.2:
+prop-types@^15.5.10, prop-types@^15.5.8, prop-types@^15.6.1, prop-types@^15.6.2, prop-types@^15.7.2:
   version "15.7.2"
   resolved "https://registry.yarnpkg.com/prop-types/-/prop-types-15.7.2.tgz#52c41e75b8c87e72b9d9360e0206b99dcbffa6c5"
   integrity sha512-8QQikdH7//R2vurIJSutZ1smHYTcLpRWEOlHnzcWHmBYrOGUysKwSsrC89BCiFj3CbrfJ/nXFdJepOVrY1GCHQ==
@@ -5130,6 +5130,14 @@ react-native-elements@^1.1.0:
     prop-types "^15.5.8"
     react-native-ratings "^6.3.0"
     react-native-status-bar-height "^2.2.0"
+
+react-native-firebase@^5.5.4:
+  version "5.5.4"
+  resolved "https://registry.yarnpkg.com/react-native-firebase/-/react-native-firebase-5.5.4.tgz#1c71d2b21a11fdb5177f7e7c05c8bf3130fb88d7"
+  integrity sha512-D7eGeVb9M69se98Munziqmy6kQ+ymgNtHqFB6lrHRdVLnUd5v0caI6iQ/kY8zrqVUD+lU3Sui2+Lm9qHZUhbDw==
+  dependencies:
+    opencollective-postinstall "^2.0.0"
+    prop-types "^15.7.2"
 
 react-native-gesture-handler@^1.3.0:
   version "1.3.0"
